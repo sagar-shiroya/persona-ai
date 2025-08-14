@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Responsive Test Helper</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .viewport { border: 2px solid #333; margin: 20px 0; }
+        iframe { width: 100%; height: 600px; border: none; }
+        .label { font-weight: bold; margin: 10px 0 5px 0; }
+    </style>
+</head>
+<body>
+    <h1>Responsive Test for Persona AI Chat</h1>
+    
+    <div class="label">Mobile (320px)</div>
+    <div class="viewport" style="width: 320px;">
+        <iframe src="http://localhost:3000"></iframe>
+    </div>
+    
+    <div class="label">Tablet (768px)</div>
+    <div class="viewport" style="width: 768px;">
+        <iframe src="http://localhost:3000"></iframe>
+    </div>
+    
+    <div class="label">Desktop (1024px)</div>
+    <div class="viewport" style="width: 1024px;">
+        <iframe src="http://localhost:3000"></iframe>
+    </div>
+</body>
+</html>
