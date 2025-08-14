@@ -1,11 +1,13 @@
 import { useState } from 'react'
-import { type PersonaType } from '../lib/personas'
+import { type PersonaType, personas } from '../lib/personas-client'
+import PersonaToggle from './PersonaToggle'
 
 interface Message {
   id: string
   text: string
   sender: 'user' | 'assistant'
   timestamp: Date
+  persona?: PersonaType
 }
 
 interface ChatResponse {
@@ -19,7 +21,12 @@ export default function ChatInterface() {
   const [inputText, setInputText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [currentPersona] = useState<PersonaType>('hitesh') // Default persona, will be configurable in future story
+  const [currentPersona, setCurrentPersona] = useState<PersonaType>('hitesh') // Default persona
+
+  const handlePersonaChange = (newPersona: PersonaType) => {
+    setCurrentPersona(newPersona)
+    setError(null) // Clear any existing errors when switching personas
+  }
 
   const sendMessageToAPI = async (message: string, conversationHistory: Message[]): Promise<ChatResponse> => {
     try {
@@ -80,7 +87,8 @@ export default function ChatInterface() {
         id: (Date.now() + 1).toString(),
         text: result.response,
         sender: 'assistant',
-        timestamp: new Date()
+        timestamp: new Date(),
+        persona: currentPersona
       }
 
       setMessages(prev => [...prev, assistantMessage])
@@ -93,7 +101,8 @@ export default function ChatInterface() {
         id: (Date.now() + 1).toString(),
         text: `Error: ${error.message || 'Failed to get response'}`,
         sender: 'assistant',
-        timestamp: new Date()
+        timestamp: new Date(),
+        persona: currentPersona
       }
       setMessages(prev => [...prev, errorMessage])
     } finally {
@@ -112,7 +121,14 @@ export default function ChatInterface() {
     <div className="chat-container">
       {/* Header */}
       <header className="p-6 bg-white border-b border-gray-100">
-        <h1 className="text-xl font-semibold text-gray-800">Persona AI Chat</h1>
+        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+          <h1 className="text-xl font-semibold text-gray-800">Persona AI Chat</h1>
+          <PersonaToggle 
+            currentPersona={currentPersona} 
+            onPersonaChange={handlePersonaChange}
+            className="sm:ml-4"
+          />
+        </div>
       </header>
 
       {/* Message Area */}
@@ -123,19 +139,44 @@ export default function ChatInterface() {
               <p>Start a conversation with an AI persona</p>
             </div>
           ) : (
-            messages.map((message) => (
-              <div
-                key={message.id}
-                className={`message ${
-                  message.sender === 'user' ? 'message-user' : 'message-assistant'
-                }`}
-              >
-                {message.text}
-              </div>
-            ))
+            messages.map((message) => {
+              const isUser = message.sender === 'user'
+              const messagePersona = message.persona || currentPersona
+              const personaColor = personas[messagePersona].color
+              
+              return (
+                <div
+                  key={message.id}
+                  className={`message ${isUser ? 'message-user' : 'message-assistant'}`}
+                  style={isUser ? {} : { backgroundColor: `${personaColor}15`, borderLeft: `4px solid ${personaColor}` }}
+                >
+                  {!isUser && (
+                    <div 
+                      className="text-xs font-semibold mb-1"
+                      style={{ color: personaColor }}
+                    >
+                      {personas[messagePersona].displayName}
+                    </div>
+                  )}
+                  {message.text}
+                </div>
+              )
+            })
           )}
           {isLoading && (
-            <div className="message message-assistant opacity-75">
+            <div 
+              className="message message-assistant opacity-75"
+              style={{ 
+                backgroundColor: `${personas[currentPersona].color}15`, 
+                borderLeft: `4px solid ${personas[currentPersona].color}` 
+              }}
+            >
+              <div 
+                className="text-xs font-semibold mb-1"
+                style={{ color: personas[currentPersona].color }}
+              >
+                {personas[currentPersona].displayName}
+              </div>
               <div className="flex items-center space-x-2">
                 <div className="animate-pulse">Thinking...</div>
                 <div className="flex space-x-1">
