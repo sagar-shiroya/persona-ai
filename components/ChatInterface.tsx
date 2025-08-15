@@ -250,7 +250,15 @@ export default function ChatInterface() {
                   </div>
                   <div 
                     className={`message ${isUser ? 'message-user' : 'message-assistant'}`}
-                    style={!isUser ? { borderLeft: `3px solid ${personaColor}` } : { borderRight: '3px solid #000000' }}
+                    style={!isUser ? { 
+                      borderLeft: `3px solid ${personaColor}`,
+                      background: personaColor,
+                      color: 'white'
+                    } : { 
+                      borderRight: '3px solid #000000',
+                      background: 'rgb(255, 255, 255)',
+                      border: '1px solid rgba(200, 200, 200, 0.3)'
+                    }}
                     aria-describedby={`message-${message.id}-label`}
                   >
                     {isUser ? (
@@ -278,7 +286,11 @@ export default function ChatInterface() {
               </div>
               <div 
                 className="message message-assistant"
-                style={{ borderLeft: `3px solid ${personas[currentPersona].color}` }}
+                style={{ 
+                  borderLeft: `3px solid ${personas[currentPersona].color}`,
+                  background: personas[currentPersona].color,
+                  color: 'white'
+                }}
               >
                 <div className="flex items-center space-x-2">
                   <div className="animate-pulse">Thinking...</div>

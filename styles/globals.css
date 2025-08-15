@@ -171,6 +171,72 @@
     -webkit-overflow-scrolling: touch;
     backdrop-filter: blur(10px);
     transition: background 0.3s ease;
+    
+    /* Modern scrollbar styling */
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  }
+
+  /* Webkit scrollbar styling for modern browsers */
+  .message-area::-webkit-scrollbar {
+    width: 6px;
+    background: transparent;
+  }
+
+  .message-area::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+  }
+
+  .message-area::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, 
+      rgba(0, 0, 0, 0.15) 0%, 
+      rgba(0, 0, 0, 0.25) 100%
+    );
+    border-radius: 10px;
+    transition: all 0.3s ease;
+  }
+
+  .message-area::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, 
+      rgba(0, 0, 0, 0.25) 0%, 
+      rgba(0, 0, 0, 0.35) 100%
+    );
+    width: 8px;
+  }
+
+  .message-area::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, 
+      rgba(0, 0, 0, 0.35) 0%, 
+      rgba(0, 0, 0, 0.45) 100%
+    );
+  }
+
+  /* Dynamic scrollbar coloring based on current persona */
+  .message-area::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, 
+      var(--current-persona-color, rgba(0, 0, 0, 0.15)) 0%, 
+      var(--current-persona-color, rgba(0, 0, 0, 0.25)) 100%
+    );
+    opacity: 0.6;
+  }
+
+  .message-area::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, 
+      var(--current-persona-color, rgba(0, 0, 0, 0.25)) 0%, 
+      var(--current-persona-color, rgba(0, 0, 0, 0.35)) 100%
+    );
+    opacity: 0.8;
+    transform: scaleX(1.33);
+    transform-origin: center;
+  }
+
+  .message-area::-webkit-scrollbar-thumb:active {
+    background: linear-gradient(180deg, 
+      var(--current-persona-color, rgba(0, 0, 0, 0.35)) 0%, 
+      var(--current-persona-color, rgba(0, 0, 0, 0.45)) 100%
+    );
+    opacity: 1;
   }
   
 
@@ -305,12 +371,10 @@
   }
   
   .message-user {
-    color: var(--primary-text);
     margin-right: 1rem;
   }
   
   .message-assistant {
-    color: var(--primary-text);
     margin-left: 1rem;
   }
 
@@ -554,6 +618,15 @@
       padding: 16px;
     }
 
+    /* Mobile scrollbar adjustments */
+    .message-area::-webkit-scrollbar {
+      width: 4px;
+    }
+    
+    .message-area::-webkit-scrollbar-thumb:hover {
+      transform: scaleX(1.5);
+    }
+
     .message {
       max-width: calc(100vw - 80px);
     }
@@ -612,6 +685,11 @@
     .app-title {
       font-size: 18px;
       line-height: 1.4;
+    }
+
+    /* Extra small scrollbar for tiny screens */
+    .message-area::-webkit-scrollbar {
+      width: 3px;
     }
   }
 
