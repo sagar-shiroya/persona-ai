@@ -255,9 +255,10 @@ export default function ChatInterface() {
                       background: personaColor,
                       color: 'white'
                     } : { 
-                      borderRight: '3px solid #000000',
-                      background: 'rgb(255, 255, 255)',
-                      border: '1px solid rgba(200, 200, 200, 0.3)'
+                      borderRight: `3px solid ${personaColor}`,
+                      background: 'var(--surface-primary)',
+                      border: '1px solid var(--border-primary)',
+                      color: 'var(--primary-text)'
                     }}
                     aria-describedby={`message-${message.id}-label`}
                   >
@@ -353,7 +354,7 @@ export default function ChatInterface() {
           </button>
         </div>
         {error && (
-          <div className="mt-2 text-red-600 text-sm px-4">
+          <div className="mt-2 text-red-400 text-sm px-4">
             {error}
           </div>
         )}

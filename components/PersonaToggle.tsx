@@ -66,7 +66,7 @@ export default function PersonaToggle({
           >
             {currentPersonaData.displayName}
           </div>
-          <div className="text-xs text-gray-500 max-w-65">
+          <div className="text-xs text-white-500 max-w-65">
             {currentPersonaData.description}
           </div>
         </div>
