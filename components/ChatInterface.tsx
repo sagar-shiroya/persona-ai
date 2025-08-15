@@ -73,6 +73,8 @@ export default function ChatInterface() {
 
   const handlePersonaChange = (newPersona: PersonaType) => {
     setCurrentPersona(newPersona)
+    setMessages([]) // Reset chat messages when switching personas
+    setInputText('') // Clear input text for fresh start
     setError(null) // Clear any existing errors when switching personas
   }
 
