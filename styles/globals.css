@@ -9,8 +9,8 @@
   :root {
     /* Figma Design System Colors */
     --gradient-blue: #89BCFF;
-    --gradient-pink: #FF86E1;
-    --primary-text: #160211;
+    --gradient-primary: #00c1be;
+    --primary-text: #064232;
     --secondary-text: #56637E;
     --border-primary: rgba(22, 2, 17, 0.3);
     --message-bg: rgba(255, 255, 255, 0.5);
@@ -47,7 +47,7 @@
   body::before {
     width: 280px;
     height: 280px;
-    background: var(--gradient-blue);
+    background: var(--gradient-primary);
     filter: blur(var(--blur-amount));
     top: 50%;
     left: 50%;
@@ -58,7 +58,7 @@
   body::after {
     width: 414px;
     height: 414px;
-    background: var(--gradient-pink);
+    background: var(--gradient-primary);
     filter: blur(var(--blur-amount-large));
     top: 50%;
     left: 50%;
@@ -154,7 +154,18 @@
     max-width: 883px;
     margin: 0 auto;
     border: 1px solid var(--border-primary);
+    border-radius: 32px;
     gap: 10px;
+    cursor: text;
+  }
+
+  .input-container:focus-within {
+    border-color: #568F87;
+  }
+
+  .input-container:has(input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.7;
   }
   
   .modern-input {
@@ -175,7 +186,7 @@
   
   .send-icon-button {
     @apply w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200;
-    background: rgba(69, 98, 136, 0.5);
+    background-color: var(--primary-text);
     min-width: 36px;
     min-height: 36px;
   }
@@ -247,7 +258,7 @@
     @apply p-3 rounded-lg transition-all duration-200;
     font-family: 'Manrope', sans-serif;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.5;
     max-width: 600px;
     word-wrap: break-word;
@@ -291,11 +302,11 @@
   }
   
   .persona-toggle-track {
-    @apply relative w-24 h-10 bg-gray-100 rounded-full border-2 border-gray-200 transition-all duration-300;
+    @apply relative w-24 h-9 bg-gray-100 rounded-full border-2 border-gray-200 transition-all duration-300;
   }
   
   .persona-toggle-thumb {
-    @apply absolute top-0.5 left-0.5 w-9 h-9 rounded-full shadow-md transition-all duration-300 flex items-center justify-center z-10;
+    @apply absolute top-0.5 left-0.5 w-7 h-7 rounded-full shadow-md transition-all duration-300 flex items-center justify-center z-10;
   }
   
   .persona-initial {
@@ -320,6 +331,9 @@
     gap: 24px;
     animation: headerFadeIn 1s ease-out 0.3s;
     animation-fill-mode: both;
+    font-weight: 600;
+    font-size: x-large;
+    color: var(--primary-text);
   }
 
   @keyframes headerFadeIn {
@@ -421,14 +435,15 @@
   .message {
     font-family: 'Manrope', sans-serif;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 1.366;
   }
 
   .modern-input {
     font-family: 'Manrope', sans-serif;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 18px;
+    margin-left: 20px;
   }
 
   .modern-input::placeholder {

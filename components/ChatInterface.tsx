@@ -3,6 +3,21 @@ import Image from 'next/image'
 import { type PersonaType, personas } from '../lib/personas-client'
 import PersonaToggle from './PersonaToggle'
 
+// Simple HTML sanitization function to allow only safe tags
+const sanitizeHtml = (html: string): string => {
+  // Allow only basic paragraph tags as specified in the persona prompts
+  const allowedTags = ['p']
+  const tagRegex = /<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g
+  
+  return html.replace(tagRegex, (match, tagName) => {
+    if (allowedTags.includes(tagName.toLowerCase())) {
+      // Only allow simple opening and closing tags without attributes
+      return match.replace(/<([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, '<$1>').replace(/<\/([a-zA-Z][a-zA-Z0-9]*)\b[^>]*>/g, '</$1>')
+    }
+    return '' // Remove disallowed tags
+  })
+}
+
 interface Message {
   id: string
   text: string
@@ -150,15 +165,18 @@ export default function ChatInterface() {
     }
   }
 
+  const handleInputContainerClick = () => {
+    if (inputRef.current && !isLoading) {
+      inputRef.current.focus()
+    }
+  }
+
   return (
     <div className="chat-container" role="main" aria-label="AI Chat Application">
       {/* Fixed Header */}
       <header className="chat-header" role="banner">
         <div className="app-header">
-          <div className="star-logo" aria-hidden="true">
-            <Image src="/logo.svg" alt="Star Logo" width={36} height={38} />
-          </div>
-          <h1 className="app-title" id="app-title">Ask Hitesh sir or Piyush sir anything</h1>
+          <h1>Persona.AI</h1>          
         </div>
         <div className="px-6 pb-3">
           <div className="flex justify-center">
@@ -176,7 +194,6 @@ export default function ChatInterface() {
         <div ref={messageAreaRef} className="message-area" id="chat-messages">
           {messages.length === 0 ? (
             <div className="welcome-message" role="status">
-              <p>Choose a persona above and start your conversation</p>
             </div>
           ) : (
             messages.map((message) => {
@@ -197,14 +214,18 @@ export default function ChatInterface() {
                     className="message-label"
                     style={!isUser ? { color: personaColor } : {}}
                   >
-                    {isUser ? 'Me' : `${personaName} sir`}
+                    {isUser ? 'Me' : `${personaName}`}
                   </div>
                   <div 
                     className={`message ${isUser ? 'message-user' : 'message-assistant'}`}
-                    style={!isUser ? { borderLeft: `3px solid ${personaColor}` } : { borderRight: '3px solid #FF86E1' }}
+                    style={!isUser ? { borderLeft: `3px solid ${personaColor}` } : { borderRight: '3px solid #000000' }}
                     aria-describedby={`message-${message.id}-label`}
                   >
-                    {message.text}
+                    {isUser ? (
+                      message.text
+                    ) : (
+                      <div dangerouslySetInnerHTML={{ __html: sanitizeHtml(message.text) }} />
+                    )}
                   </div>
                 </div>
               )
@@ -221,7 +242,7 @@ export default function ChatInterface() {
                 className="message-label"
                 style={{ color: personas[currentPersona].color }}
               >
-                {personas[currentPersona].displayName} sir
+                {personas[currentPersona].displayName}
               </div>
               <div 
                 className="message message-assistant"
@@ -243,14 +264,19 @@ export default function ChatInterface() {
 
       {/* Fixed Footer */}
       <footer className="chat-footer" role="form" aria-label="Send message form">
-        <div className="input-container" role="group" aria-label="Message input group">
+        <div 
+          className="input-container" 
+          role="group" 
+          aria-label="Message input group"
+          onClick={handleInputContainerClick}
+        >
           <input
             ref={inputRef}
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder={isLoading ? "AI is thinking..." : "Ask me anything about your projects"}
+            placeholder={isLoading ? "AI is thinking..." : "Ask" + " anything"}
             className="modern-input"
             disabled={isLoading}
             aria-label="Type your message here"

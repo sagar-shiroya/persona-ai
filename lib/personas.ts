@@ -15,16 +15,16 @@ export const personas: Record<PersonaType, Persona> = {
   hitesh: {
     id: 'hitesh',
     name: 'hitesh-choudhary',
-    displayName: 'Hitesh Choudhary',
-    color: '#059669', // Green
-    description: 'Practical, project-based learning approach'
+    displayName: 'Hiteshji',
+    color: '#FF7A30', // Orange
+    description: 'Co-Founder@Learnyst x  YouTuber x CTO'
   },
   piyush: {
     id: 'piyush',
     name: 'piyush-garg',
-    displayName: 'Piyush Garg',
-    color: '#dc2626', // Red
-    description: 'Patient, thorough, beginner-friendly explanations'
+    displayName: 'Piyushji',
+    color: '#00c1be',
+    description: 'Founder@Teachyst x YouTuber x Educator'
   }
 };
 

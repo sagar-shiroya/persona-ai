@@ -10,8 +10,8 @@ module.exports = {
         primary: '#2563eb',
         'dark-gray': '#1f2937',
         'light-bg': '#f9fafb',
-        'persona-hitesh': '#059669',
-        'persona-piyush': '#dc2626',
+        'persona-hitesh': '#FE7743',
+        'persona-piyush': '#447D9B',
       },
       fontFamily: {
         sans: ['ui-sans-serif', 'system-ui', 'sans-serif'],

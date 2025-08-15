@@ -23,8 +23,6 @@ export default function PersonaToggle({
   return (
     <div className={`persona-toggle-container ${className}`}>
       <div className="flex items-center space-x-3">
-        <span className="text-sm font-medium text-gray-600">AI Persona:</span>
-        
         <button
           onClick={handleToggle}
           className="persona-toggle-button"
@@ -68,7 +66,7 @@ export default function PersonaToggle({
           >
             {currentPersonaData.displayName}
           </div>
-          <div className="text-xs text-gray-500 max-w-48 truncate">
+          <div className="text-xs text-gray-500 max-w-65">
             {currentPersonaData.description}
           </div>
         </div>
