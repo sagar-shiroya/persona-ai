@@ -76,6 +76,30 @@ export default function ChatInterface() {
     setError(null) // Clear any existing errors when switching personas
   }
 
+  // Helper function to convert hex to rgba
+  const hexToRgba = (hex: string, alpha: number): string => {
+    const r = parseInt(hex.slice(1, 3), 16)
+    const g = parseInt(hex.slice(3, 5), 16)
+    const b = parseInt(hex.slice(5, 7), 16)
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`
+  }
+
+  // Update CSS custom properties when persona changes
+  useEffect(() => {
+    const personaData = personas[currentPersona]
+    const root = document.documentElement
+    
+    // Set the persona color as a CSS custom property for dynamic theming
+    root.style.setProperty('--persona-color', personaData.color)
+    
+    // Update body background with persona color
+    const bodyColor = hexToRgba(personaData.color, 0.05)
+    root.style.setProperty('--body-bg', bodyColor)
+    
+    // Update gradient colors to match persona
+    root.style.setProperty('--gradient-primary', personaData.color)
+  }, [currentPersona])
+
   const sendMessageToAPI = async (message: string, conversationHistory: Message[]): Promise<ChatResponse> => {
     try {
       const response = await fetch('/api/chat', {
@@ -172,7 +196,15 @@ export default function ChatInterface() {
   }
 
   return (
-    <div className="chat-container" role="main" aria-label="AI Chat Application">
+    <div 
+      className="chat-container" 
+      role="main" 
+      aria-label="AI Chat Application"
+      style={{
+        '--current-persona-color': personas[currentPersona].color,
+        '--current-persona-bg': hexToRgba(personas[currentPersona].color, 0.08),
+      } as React.CSSProperties}
+    >
       {/* Fixed Header */}
       <header className="chat-header" role="banner">
         <div className="app-header">
