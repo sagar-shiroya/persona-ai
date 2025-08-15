@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
+import Image from 'next/image'
 import { type PersonaType, personas } from '../lib/personas-client'
 import PersonaToggle from './PersonaToggle'
 
@@ -22,6 +23,38 @@ export default function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [currentPersona, setCurrentPersona] = useState<PersonaType>('hitesh') // Default persona
+  const messageAreaRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (messageAreaRef.current) {
+      const scrollElement = messageAreaRef.current
+      // Use setTimeout to ensure DOM is updated before scrolling
+      setTimeout(() => {
+        scrollElement.scrollTop = scrollElement.scrollHeight
+      }, 100)
+    }
+  }, [messages, isLoading])
+
+  // Auto-focus input when AI finishes responding
+  useEffect(() => {
+    if (!isLoading && inputRef.current) {
+      // Small delay to ensure the UI has updated before focusing
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 150)
+    }
+  }, [isLoading])
+
+  // Auto-focus input on component mount for immediate typing
+  useEffect(() => {
+    if (inputRef.current) {
+      setTimeout(() => {
+        inputRef.current?.focus()
+      }, 100)
+    }
+  }, [])
 
   const handlePersonaChange = (newPersona: PersonaType) => {
     setCurrentPersona(newPersona)
@@ -118,71 +151,89 @@ export default function ChatInterface() {
   }
 
   return (
-    <div className="chat-container">
-      {/* Header */}
-      <header className="p-6 bg-white border-b border-gray-100">
-        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-          <h1 className="text-xl font-semibold text-gray-800">Persona AI Chat</h1>
-          <PersonaToggle 
-            currentPersona={currentPersona} 
-            onPersonaChange={handlePersonaChange}
-            className="sm:ml-4"
-          />
+    <div className="chat-container" role="main" aria-label="AI Chat Application">
+      {/* Fixed Header */}
+      <header className="chat-header" role="banner">
+        <div className="app-header">
+          <div className="star-logo" aria-hidden="true">
+            <Image src="/logo.svg" alt="Star Logo" width={36} height={38} />
+          </div>
+          <h1 className="app-title" id="app-title">Ask Hitesh sir or Piyush sir anything</h1>
+        </div>
+        <div className="px-6 pb-3">
+          <div className="flex justify-center">
+            <PersonaToggle 
+              currentPersona={currentPersona} 
+              onPersonaChange={handlePersonaChange}
+              aria-label="Choose AI persona to chat with"
+            />
+          </div>
         </div>
       </header>
 
-      {/* Message Area */}
-      <main className="flex-1">
-        <div className="message-area min-h-96">
+      {/* Scrollable Message Area */}
+      <main className="chat-main" role="log" aria-live="polite" aria-label="Chat conversation">
+        <div ref={messageAreaRef} className="message-area" id="chat-messages">
           {messages.length === 0 ? (
-            <div className="text-center text-gray-500 mt-8">
-              <p>Start a conversation with an AI persona</p>
+            <div className="welcome-message" role="status">
+              <p>Choose a persona above and start your conversation</p>
             </div>
           ) : (
             messages.map((message) => {
               const isUser = message.sender === 'user'
               const messagePersona = message.persona || currentPersona
+              const personaName = personas[messagePersona].displayName
               const personaColor = personas[messagePersona].color
               
               return (
                 <div
                   key={message.id}
-                  className={`message ${isUser ? 'message-user' : 'message-assistant'}`}
-                  style={isUser ? {} : { backgroundColor: `${personaColor}15`, borderLeft: `4px solid ${personaColor}` }}
+                  className={`message-wrapper ${isUser ? 'message-user' : 'message-assistant'}`}
+                  role="article"
+                  aria-labelledby={`message-${message.id}-label`}
                 >
-                  {!isUser && (
-                    <div 
-                      className="text-xs font-semibold mb-1"
-                      style={{ color: personaColor }}
-                    >
-                      {personas[messagePersona].displayName}
-                    </div>
-                  )}
-                  {message.text}
+                  <div 
+                    id={`message-${message.id}-label`}
+                    className="message-label"
+                    style={!isUser ? { color: personaColor } : {}}
+                  >
+                    {isUser ? 'Me' : `${personaName} sir`}
+                  </div>
+                  <div 
+                    className={`message ${isUser ? 'message-user' : 'message-assistant'}`}
+                    style={!isUser ? { borderLeft: `3px solid ${personaColor}` } : { borderRight: '3px solid #FF86E1' }}
+                    aria-describedby={`message-${message.id}-label`}
+                  >
+                    {message.text}
+                  </div>
                 </div>
               )
             })
           )}
           {isLoading && (
             <div 
-              className="message message-assistant opacity-75"
-              style={{ 
-                backgroundColor: `${personas[currentPersona].color}15`, 
-                borderLeft: `4px solid ${personas[currentPersona].color}` 
-              }}
+              className="message-wrapper message-assistant opacity-75"
+              role="status"
+              aria-live="polite"
+              aria-label={`${personas[currentPersona].displayName} is thinking`}
             >
               <div 
-                className="text-xs font-semibold mb-1"
+                className="message-label"
                 style={{ color: personas[currentPersona].color }}
               >
-                {personas[currentPersona].displayName}
+                {personas[currentPersona].displayName} sir
               </div>
-              <div className="flex items-center space-x-2">
-                <div className="animate-pulse">Thinking...</div>
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+              <div 
+                className="message message-assistant"
+                style={{ borderLeft: `3px solid ${personas[currentPersona].color}` }}
+              >
+                <div className="flex items-center space-x-2">
+                  <div className="animate-pulse">Thinking...</div>
+                  <div className="flex space-x-1" aria-hidden="true">
+                    <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -190,26 +241,45 @@ export default function ChatInterface() {
         </div>
       </main>
 
-      {/* Input Area */}
-      <footer className="input-area">
-        <div className="input-container">
+      {/* Fixed Footer */}
+      <footer className="chat-footer" role="form" aria-label="Send message form">
+        <div className="input-container" role="group" aria-label="Message input group">
           <input
+            ref={inputRef}
             type="text"
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder={isLoading ? "AI is thinking..." : "Message..."}
+            placeholder={isLoading ? "AI is thinking..." : "Ask me anything about your projects"}
             className="modern-input"
             disabled={isLoading}
-            aria-label="Message input"
+            aria-label="Type your message here"
+            aria-describedby="send-help-text"
+            autoComplete="off"
+            maxLength={1000}
           />
+          <span id="send-help-text" className="sr-only">
+            Press Enter to send or click the send button
+          </span>
           <button
             onClick={handleSendMessage}
             disabled={!inputText.trim() || isLoading}
             className="send-icon-button"
-            aria-label="Send message"
+            aria-label={isLoading ? "AI is processing your message" : "Send message"}
+            type="submit"
           >
-            {isLoading ? '⏳' : '↑'}
+            {isLoading ? (
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle cx="12" cy="12" r="2" fill="currentColor">
+                  <animate attributeName="r" values="2;8;2" dur="1s" repeatCount="indefinite"/>
+                  <animate attributeName="opacity" values="1;0.3;1" dur="1s" repeatCount="indefinite"/>
+                </circle>
+              </svg>
+            ) : (
+              <svg viewBox="0 0 35 35" fill="none">
+                <path d="M17.5 2.5L32.5 17.5L17.5 32.5L16.25 31.25L28.75 18.75H2.5V16.25H28.75L16.25 3.75L17.5 2.5Z" fill="white"/>
+              </svg>
+            )}
           </button>
         </div>
         {error && (
