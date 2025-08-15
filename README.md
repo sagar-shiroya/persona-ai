@@ -15,7 +15,7 @@ A minimalistic AI chat application featuring personas of tech educators **Hitesh
 - **Next.js 15** - React framework with Pages Router
 - **TypeScript** - Type safety and developer experience  
 - **Tailwind CSS** - Utility-first styling
-- **OpenAI API** - GPT-4o-mini integration
+- **OpenAI API** - gpt-4.1-mini integration
 
 ## Quick Start
 
